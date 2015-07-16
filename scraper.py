@@ -29,9 +29,9 @@ for c in classes:
 
 		titletext = cdata[7].xpath('font/text()')
 		if titletext == [u'\xa0']:
-			titles.append(cdata[7].xpath('font/a/text()')[0])
+			titles.append(cdata[7].xpath('font/a/text()')[0][18:])
 		else:
-			titles.append(titletext[0])
+			titles.append(titletext[0][18:])
 
 		daysTaught.append(cdata[8].xpath('font/text()')[0])
 		times.append(cdata[9].xpath('font/text()')[0])
@@ -59,4 +59,3 @@ print daysTaught
 print times
 print locations
 print instructors
-
