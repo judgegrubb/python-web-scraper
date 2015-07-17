@@ -3,6 +3,7 @@ from pymongo import MongoClient
 import requests
 import datetime
 
+# simply change the dept variable in the link below to scrape different deptartments at the U
 page = requests.get('http://www.acs.utah.edu/uofu/stu/scheduling?term=1158&dept=CS&classtype=g')
 tree = html.fromstring(page.text)
 
@@ -49,22 +50,13 @@ for c in classes:
 		else:
 			instructors.append(instructortext[0])
 
-
-print len(classNumbers)
-print len(catalogNumbers)
-print len(sections)
-print len(components)
-print len(units)
-print len(titles)
-print len(daysTaught)
-print len(times)
-print len(locations)
-print len(instructors)
-
+# This is for my personal project which runs on meteor and mangodb
 client = MongoClient('mongodb://127.0.0.1:3001/')
 db = client['meteor']
 tasks = db['classes']
 
+# This database schema is likely to change due to repeats and different section numbers
+# But as a proof of concept this is wonderful right now
 for i in range(0, len(titles)):     
 	tasks.insert({         
 		"catalogNumber": catalogNumbers[i],         
