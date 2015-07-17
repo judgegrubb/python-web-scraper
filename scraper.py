@@ -1,5 +1,7 @@
 from lxml import html
+from pymongo import MongoClient
 import requests
+import datetime
 
 page = requests.get('http://www.acs.utah.edu/uofu/stu/scheduling?term=1158&dept=CS&classtype=g')
 tree = html.fromstring(page.text)
@@ -27,11 +29,10 @@ for c in classes:
 		components.append(cdata[5].xpath('font/text()')[0])
 		units.append(cdata[6].xpath('font/text()')[0])
 
-		titletext = cdata[7].xpath('font/text()')
-		if titletext == [u'\xa0']:
-			titles.append(cdata[7].xpath('font/a/text()')[0][18:][:-9])
+		if len(cdata[7].xpath('font/a/text()')) > 0:
+			titles.append(cdata[7].xpath('font/a/text()')[0])
 		else:
-			titles.append(titletext[0][18:][:-9])
+			titles.append(cdata[7].xpath('font/text()')[0][18:][:-9])
 
 		daysTaught.append(cdata[8].xpath('font/text()')[0])
 		times.append(cdata[9].xpath('font/text()')[0])
@@ -49,13 +50,31 @@ for c in classes:
 			instructors.append(instructortext[0])
 
 
-print classNumbers
-print catalogNumbers
-print sections
-print components
-print units
-print titles
-print daysTaught
-print times
-print locations
-print instructors
+print len(classNumbers)
+print len(catalogNumbers)
+print len(sections)
+print len(components)
+print len(units)
+print len(titles)
+print len(daysTaught)
+print len(times)
+print len(locations)
+print len(instructors)
+
+client = MongoClient('mongodb://127.0.0.1:3001/')
+db = client['meteor']
+tasks = db['classes']
+
+for i in range(0, len(titles)):     
+	tasks.insert({         
+		"catalogNumber": catalogNumbers[i],         
+		"section": sections[i],         
+		"unit": units[i],
+		"title": titles[i],         
+		"daysTaught": daysTaught[i],         
+		"time": times[i],         
+		"location": locations[i],         
+		"instructor": instructors[i],         
+		"createdAt": datetime.datetime.utcnow()     
+	})
+
